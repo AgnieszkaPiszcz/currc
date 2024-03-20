@@ -8,46 +8,46 @@ This is a currency conversion tool that sources currency exchange rates from htt
 
 ### Usage:
 
-Usage: currc [OPTIONS] \<COMMAND\>
+Usage: `currc [OPTIONS] <COMMAND>`
 
 Commands:
-  i     Enter interactive mode
-  rate  Get exchange rate from base to target currency, if an amount is provided convert the amount from base to target currency
-  all   Get all exchange rates for a currency
-  help  Print this message or the help of the given subcommand(s)
+ - `i`     Enter interactive mode
+ - `rate`  Get exchange rate from base to target currency, if an amount is provided convert the amount from base to target currency
+ - `all`   Get all exchange rates for a currency
+ - `help`  Print this message or the help of the given subcommand(s)
 
 Options:
-  -r          Redownload supporteed currency codes
-  -h, --help  Print help
+ - `-r`          Redownload supporteed currency codes
+ - `-h, --help`  Print help
 
 ##### Enter interactive mode
 
-Usage: currc i
+Usage: `currc i`
 
 Options:
-  -h, --help  Print help
+ - `-h, --help`  Print help
 
 ##### Get exchange rate from base to target currency, if an amount is provided convert the amount from base to target currency
 
-Usage: currc rate `<BASE>` `<TARGET>` [AMOUNT]
+Usage: `currc rate <BASE> <TARGET> [AMOUNT]`
 
 Arguments:
-  \<BASE\>    Base currency
-  <TARGET>  Target currency
-  [AMOUNT]  Amount to convert
+ - `<BASE>`    Base currency
+ - `<TARGET>`  Target currency
+ - `[AMOUNT]`  Amount to convert
 
 Options:
   -h, --help  Print help
 
 ##### Get all exchange rates for a currency
 
-Usage: currc all <CURR>
+Usage: `currc all <CURR>`
 
 Arguments:
-  <CURR>  Currency code
+ - `<CURR>`  Currency code
 
 Options:
-  -h, --help  Print help\
+ - `-h, --help`  Print help
 
 ### Additional functionalities
 
