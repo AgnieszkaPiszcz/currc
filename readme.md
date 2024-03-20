@@ -8,7 +8,7 @@ This is a currency conversion tool that sources currency exchange rates from htt
 
 ### Usage:
 
-Usage: currc [OPTIONS] <COMMAND>
+Usage: currc [OPTIONS] \<COMMAND\>
 
 Commands:
   i     Enter interactive mode
@@ -29,7 +29,7 @@ Options:
 
 ##### Get exchange rate from base to target currency, if an amount is provided convert the amount from base to target currency
 
-Usage: currc rate <BASE> <TARGET> [AMOUNT]
+Usage: currc rate `<BASE>` `<TARGET>` [AMOUNT]
 
 Arguments:
   <BASE>    Base currency
