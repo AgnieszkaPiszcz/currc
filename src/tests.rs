@@ -13,6 +13,7 @@ async fn test_cache_get() {
     };
     cache.insert(item);
     let actual = cache.get("USD".to_string());
+    cache.save().unwrap();
     assert!(actual.is_none());
 }
 
