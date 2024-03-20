@@ -18,6 +18,6 @@ FROM debian:stable-slim AS runtime
 WORKDIR /app
 COPY --from=builder /app/app /usr/local/bin/
 RUN apt-get update && apt install -y openssl
-RUN chmod +x entrypoint.sh
+RUN chmod +x /usr/local/bin/app
 ENTRYPOINT ["/usr/local/bin/app"]
 CMD ["help"]
