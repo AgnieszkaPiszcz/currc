@@ -81,7 +81,7 @@ pub async fn interactive_mode(cache: &mut CurrenciesStore) {
 async fn interactive_print_all_rates(cache: &mut CurrenciesStore) {
     let curr = Text::new("Base currency code: ").prompt();
     let curr = match curr {
-        Ok(c) => c,
+        Ok(c) => c.to_uppercase(),
         Err(e) => {
             println!("{0}", e.to_string());
             return;
@@ -105,7 +105,7 @@ async fn interactive_print_all_rates(cache: &mut CurrenciesStore) {
 async fn interactive_print_rate(cache: &mut CurrenciesStore) {
     let base = Text::new("Base currency code: ").prompt();
     let base = match base {
-        Ok(c) => c,
+        Ok(c) => c.to_uppercase(),
         Err(e) => {
             println!("{0}", e.to_string());
             return;
@@ -117,7 +117,7 @@ async fn interactive_print_rate(cache: &mut CurrenciesStore) {
     }
     let target = Text::new("Base currency code: ").prompt();
     let target = match target {
-        Ok(c) => c,
+        Ok(c) => c.to_uppercase(),
         Err(e) => {
             println!("{0}", e.to_string());
             return;
@@ -141,7 +141,7 @@ async fn interactive_print_rate(cache: &mut CurrenciesStore) {
 pub async fn interactive_print_amount(cache: &mut CurrenciesStore) {
     let base = Text::new("Base currency code: ").prompt();
     let base = match base {
-        Ok(c) => c,
+        Ok(c) => c.to_uppercase(),
         Err(e) => {
             println!("{0}", e.to_string());
             return;
@@ -153,7 +153,7 @@ pub async fn interactive_print_amount(cache: &mut CurrenciesStore) {
     }
     let target = Text::new("Target currency code: ").prompt();
     let target = match target {
-        Ok(c) => c,
+        Ok(c) => c.to_uppercase(),
         Err(e) => {
             println!("{0}", e.to_string());
             return;

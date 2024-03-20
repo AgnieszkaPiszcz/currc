@@ -33,10 +33,12 @@ async fn main() {
             interactive_mode(&mut cache).await;
         },
         Commands::Convert{amount, base, target} => {
+            let base = base.to_uppercase();
             if !cache.validate_code(base.clone()) {
                 println!("Invalid currency code {base}");
                 return;
             }
+            let target = target.to_uppercase();
             if !cache.validate_code(target.clone()) {
                 println!("Invalid currency code {target}");
                 return;
@@ -54,6 +56,7 @@ async fn main() {
 
         },
         Commands::AllRates{curr} => {
+            let curr = curr.to_uppercase();
             match get_all_rates(curr.clone(), &mut cache).await {
                 Ok(rates) => print_all_rates(curr, rates),
                 Err(e) => println!("{0}", e.to_string()),

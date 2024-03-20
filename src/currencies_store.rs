@@ -31,7 +31,7 @@ pub struct CurrenciesStore{
 
 impl CurrenciesStore {
     pub fn get(&self, code: String) -> Option<&CurrencyData> {
-        if let Some(c) = self.items.get(&code) {
+        if let Some(c) = self.items.get(&code.to_uppercase()) {
             if c.time_next_update_unix < Utc::now() {
                 None
             } else {
@@ -43,7 +43,7 @@ impl CurrenciesStore {
     }
 
     pub fn validate_code(&self, code: String) -> bool {
-        if let Some(_) = self.supported_codes.get(&code) {
+        if let Some(_) = self.supported_codes.get(&code.to_uppercase()) {
             true
         } else {
             false
