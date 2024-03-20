@@ -5,9 +5,9 @@ use chrono::serde::ts_seconds::serialize as to_ts;
 use std::{collections::{HashMap, HashSet}, fs, io::{Read, Write}, path};
 use super::err::AppError;
 
-const API_KEY: &str = "fd07c1926e5f91e8c79104a4"; // paste your api key here
-const CACHE_FILE: &str = "cache.txt";
-const CODES_FILE: &str = "codes.txt";
+pub const API_KEY: &str = ""; // paste your api key here
+pub const CACHE_FILE: &str = "cache.txt";
+pub const CODES_FILE: &str = "codes.txt";
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(untagged)]
@@ -19,30 +19,30 @@ pub enum APIResponse {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CurrencyData {
-    base_code: String,
+    pub base_code: String,
     #[serde(deserialize_with = "from_ts")]
     #[serde(serialize_with = "to_ts")]
-    time_next_update_unix: DateTime<Utc>,
-    conversion_rates: HashMap<String, f32>,
+    pub time_next_update_unix: DateTime<Utc>,
+    pub conversion_rates: HashMap<String, f32>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CurrencyCodes {
-    supported_codes: HashSet<(String, String)>,
+    pub supported_codes: HashSet<(String, String)>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ErrResponse {
     #[serde(alias = "error-type")]
-    error_type: String,
+    pub error_type: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Cache{
     #[serde(deserialize_with = "from_ts")]
     #[serde(serialize_with = "to_ts")]
-    time_next_update_unix: DateTime<Utc>,
-    items: HashMap<String, CurrencyData>,
+    pub time_next_update_unix: DateTime<Utc>,
+    pub items: HashMap<String, CurrencyData>,
 }
 
 impl Cache {
