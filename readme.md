@@ -20,14 +20,14 @@ Options:
  - `-r`          Redownload supporteed currency codes
  - `-h, --help`  Print help
 
-##### Enter interactive mode
+#### Enter interactive mode
 
 Usage: `currc i`
 
 Options:
  - `-h, --help`  Print help
 
-##### Get exchange rate from base to target currency, if an amount is provided convert the amount from base to target currency
+#### Get exchange rate from base to target currency, if an amount is provided convert the amount from base to target currency
 
 Usage: `currc rate <BASE> <TARGET> [AMOUNT]`
 
@@ -39,7 +39,7 @@ Arguments:
 Options:
   -h, --help  Print help
 
-##### Get all exchange rates for a currency
+#### Get all exchange rates for a currency
 
 Usage: `currc all <CURR>`
 
