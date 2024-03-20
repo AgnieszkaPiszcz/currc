@@ -4,7 +4,7 @@ This is a currency conversion tool that sources currency exchange rates from htt
 
 ## Setup instructions
 
-1. Obtain an api key from https://www.exchangerate-api.com/ by creating a free account and paste you api key in line 8 in ./src/rates_getter.rs.
+1. Obtain an api key from https://www.exchangerate-api.com/ by creating a free account and paste you api key in line 6 in ./src/api_access.rs.
 
 ## Usage:
 
