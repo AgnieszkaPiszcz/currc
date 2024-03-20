@@ -1,23 +1,25 @@
-FROM lukemathwalker/cargo-chef:latest as chef
-WORKDIR /app
+FROM rust:slim-buster as build
 
-FROM chef AS planner
-COPY ./Cargo.toml ./Cargo.lock ./
-COPY ./src ./src
-RUN cargo chef prepare
+RUN USER=root cargo new --bin currc
+WORKDIR /currc
 
-FROM chef AS builder
-COPY --from=planner /app/recipe.json .
-RUN cargo chef cook --release
-COPY . .
+COPY ./Cargo.lock ./Cargo.lock
+COPY ./Cargo.toml ./Cargo.toml
+COPY ./cache.json ./cache.json 
+
+RUN apt-get update && apt install -y libssl-dev pkg-config
 RUN cargo build --release
-RUN mv ./target/release/currc ./app
-RUN mv ./cache.json ./app
+RUN rm src/*.rs
 
-FROM debian:stable-slim AS runtime
-WORKDIR /app
-COPY --from=builder /app/app /usr/local/bin/
-RUN apt-get update && apt install -y openssl
-RUN chmod +x /usr/local/bin/app
-ENTRYPOINT ["/usr/local/bin/app"]
-CMD ["help"]
+COPY ./src ./src
+
+RUN rm ./target/release/deps/currc*
+RUN cargo build --release
+
+FROM rust:1.49
+
+COPY --from=build /currc/target/release/currc .
+COPY --from=build /currc/cache.json .
+RUN chmod +x ./currc
+CMD ["./currc help"]
+
