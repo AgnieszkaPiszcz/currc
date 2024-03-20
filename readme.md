@@ -32,7 +32,7 @@ Options:
 Usage: currc rate `<BASE>` `<TARGET>` [AMOUNT]
 
 Arguments:
-  <BASE>    Base currency
+  \<BASE\>    Base currency
   <TARGET>  Target currency
   [AMOUNT]  Amount to convert
 
