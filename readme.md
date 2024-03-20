@@ -2,11 +2,11 @@
 
 This is a currency conversion tool that sources currency exchange rates from https://www.exchangerate-api.com/.
 
-### Setup instructions
+## Setup instructions
 
 1. Obtain an api key from https://www.exchangerate-api.com/ by creating a free account and paste you api key in line 8 in ./src/rates_getter.rs.
 
-### Usage:
+## Usage:
 
 Usage: `currc [OPTIONS] <COMMAND>`
 
@@ -49,6 +49,6 @@ Arguments:
 Options:
  - `-h, --help`  Print help
 
-### Additional functionalities
+## Additional features
 
 Currc caches API call results in a text file. If cached data for a currency is expired, it is redownloaded from the API and the cache is updated.
