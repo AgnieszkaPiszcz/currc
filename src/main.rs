@@ -5,11 +5,12 @@ mod currencies_store;
 mod app_error;
 mod api_access;
 mod interactive_cli;
-use std::collections::HashMap;
 mod rates_getter;
 
-use api_access::fetch_currency_data;
+use std::collections::HashMap;
 use clap::Parser;
+
+use api_access::fetch_currency_data;
 use non_interactive_cli::*;
 use currencies_store::*;
 use app_error::AppError;

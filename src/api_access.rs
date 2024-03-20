@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use super::app_error::AppError;
 use super::*;
 
-pub const API_KEY: &str = "fd07c1926e5f91e8c79104a4"; // paste your api key here
+pub const API_KEY: &str = ""; // paste your api key here
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(untagged)]
