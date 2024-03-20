@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI pipeline
 
 on:
   push:
@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout Repository
+    - name: checkout repo
       uses: actions/checkout@v4
       
-    - name: Set up Docker Buildx
+    - name: docker
       uses: docker/setup-buildx-action@v3
       
     - name: test and build
