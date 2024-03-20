@@ -4,7 +4,7 @@ use chrono::{Duration, Utc};
 use super::*;
 
 #[tokio::test]
-async fn test_cache_get() {
+async fn test_cache_get1() {
     let mut cache = CurrenciesStore::new().unwrap();
     let item = CurrencyData {
         base_code: "USD".to_string(),
@@ -16,4 +16,6 @@ async fn test_cache_get() {
     cache.save().unwrap();
     assert!(actual.is_none());
 }
+
+
 
