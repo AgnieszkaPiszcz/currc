@@ -16,7 +16,7 @@ pub enum Commands {
     /// Enter interactive mode
     I,
     /// Get exchange rate from base to target currency, if an amount is provided convert the amount from base to target currency
-    Rate {
+    Convert {
         /// Base currency 
         #[arg(index = 1)]
         base: String,
@@ -28,7 +28,7 @@ pub enum Commands {
         amount: Option<f32>,
     },
     /// Get all exchange rates for a currency
-    All {
+    AllRates {
         /// Currency code
         curr: String,
     },

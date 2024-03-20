@@ -12,8 +12,8 @@ Usage: `currc [OPTIONS] <COMMAND>`
 
 Commands:
  - `i`     Enter interactive mode
- - `rate`  Get exchange rate from base to target currency, if an amount is provided convert the amount from base to target currency
- - `all`   Get all exchange rates for a currency
+ - `convert`  Get exchange rate from base to target currency, if an amount is provided convert the amount from base to target currency
+ - `allrates`   Get all exchange rates for a currency
  - `help`  Print this message or the help of the given subcommand(s)
 
 Options:
@@ -29,7 +29,7 @@ Options:
 
 #### Get exchange rate from base to target currency, if an amount is provided convert the amount from base to target currency
 
-Usage: `currc rate <BASE> <TARGET> [AMOUNT]`
+Usage: `currc convert <BASE> <TARGET> [AMOUNT]`
 
 Arguments:
  - `<BASE>`    Base currency
@@ -41,7 +41,7 @@ Options:
 
 #### Get all exchange rates for a currency
 
-Usage: `currc all <CURR>`
+Usage: `currc allrates <CURR>`
 
 Arguments:
  - `<CURR>`  Currency code

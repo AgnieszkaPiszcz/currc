@@ -1,28 +1,26 @@
 #[cfg(test)]
 mod tests;
-mod cli;
+mod non_interactive_cli;
+mod currencies_store;
+mod app_error;
+mod api_access;
+mod interactive_cli;
+use std::collections::HashMap;
 mod rates_getter;
-mod err;
 
-use std::collections::HashSet;
-
+use api_access::fetch_currency_data;
 use clap::Parser;
-use cli::*;
+use non_interactive_cli::*;
+use currencies_store::*;
+use app_error::AppError;
 use rates_getter::*;
-use inquire::{error::InquireError, Select, Text};
-use std::str::FromStr;
+use interactive_cli::*;
+
 
 #[tokio::main]
 async fn main() {
     let args = Cli::parse();
-    let codes = match get_codes(args.refresh_codes).await {
-        Ok(r) => r,
-        Err(e) => {
-            println!("{0}", e.to_string());
-            std::process::exit(1)
-        }
-    };
-    let mut cache = match Cache::load(){
+    let mut cache = match CurrenciesStore::load().await {
         Ok(r) => r,
         Err(e) => {
             println!("{0}", e.to_string());
@@ -32,84 +30,34 @@ async fn main() {
 
     match args.command {
         Commands::I => {
-            loop {
-                let opts = vec![
-                "Get all conversion rates for a currency.", 
-                "Get conversion rate from base to target currency.",
-                "Convert an amount from base to target currency.",
-                "Quit.",
-                ];
-                let ans: Result<&str, InquireError> = Select::new("What do you want to do?", opts.clone()).prompt();
-                match ans {
-                    Ok(choice) => {
-                        match choice {
-                            _ if choice == opts[0] => {
-                                interactive_print_all_rates(&codes, &mut cache).await;
-                                loop {
-                                    let inner_opts = vec!["Again.", "Go back."];
-                                    let ans: Result<&str, InquireError> = Select::new("What do you want to do?", inner_opts.clone()).prompt();
-                                    match ans {
-                                        Ok(ch) => {
-                                            match ch {
-                                                "Again." => interactive_print_all_rates(&codes, &mut cache).await,
-                                                "Go back." => break,
-                                                _=> unreachable!(),
-                                            }
-                                        },
-                                        Err(_) => println!("There was an error, please try again."),
-                                    }
-                                }
-                            }
-                            _ if choice == opts[1] => {
-                                interactive_print_rate(&codes, &mut cache).await;
-                                loop {
-                                    let inner_opts = vec!["Again.", "Go back."];
-                                    let ans: Result<&str, InquireError> = Select::new("What do you want to do?", inner_opts.clone()).prompt();
-                                    match ans {
-                                        Ok(ch) => {
-                                            match ch {
-                                                "Again." => interactive_print_rate(&codes, &mut cache).await,
-                                                "Go back." => break,
-                                                _=> unreachable!(),
-                                            }
-                                        },
-                                        Err(_) => println!("There was an error, please try again."),
-                                    }
-                                }
-                            }
-                            _ if choice == opts[2] => {
-                                interactive_print_amount(&codes, &mut cache).await;
-                                loop {
-                                    let inner_opts = vec!["Again.", "Go back."];
-                                    let ans: Result<&str, InquireError> = Select::new("What do you want to do?", inner_opts.clone()).prompt();
-                                    match ans {
-                                        Ok(ch) => {
-                                            match ch {
-                                                "Again." => interactive_print_amount(&codes, &mut cache).await,
-                                                "Go back." => break,
-                                                _=> unreachable!(),
-                                            }
-                                        },
-                                        Err(e) => println!("{0}", e.to_string()),
-                                    }
-                                }
-                            }
-                            _ if choice == opts[3] => {
-                                break;
-                            }
-                            _ => unreachable!(),
-                        }
-                    },
-                    Err(e) => println!("{0}", e.to_string()),
-                }
+            interactive_mode(&mut cache).await;
+        },
+        Commands::Convert{amount, base, target} => {
+            if !cache.validate_code(base.clone()) {
+                println!("Invalid currency code {base}");
+                return;
             }
+            if !cache.validate_code(target.clone()) {
+                println!("Invalid currency code {target}");
+                return;
+            }
+            let amount = if let Some(a) = amount {a} else {1.0};
+            let converted_amount = get_amount(base.clone(), target.clone(), amount, &mut cache).await;
+            let converted_amount = match converted_amount {
+                Ok(a) => a,
+                Err(e) => {
+                    println!("{0}", e.to_string());
+                    return;
+                }
+            };
+            println!("{amount} {base} is {converted_amount} {target}");
 
         },
-        Commands::Rate{amount, base, target} => {
-            print_rate(amount, base, target, &codes, &mut cache).await;
-        },
-        Commands::All{curr} => {
-            print_all_rates(curr, &codes, &mut cache).await;
+        Commands::AllRates{curr} => {
+            match get_all_rates(curr.clone(), &mut cache).await {
+                Ok(rates) => print_all_rates(curr, rates),
+                Err(e) => println!("{0}", e.to_string()),
+            }
         },
     };
 
@@ -122,98 +70,10 @@ async fn main() {
     }
 }
 
-async fn print_rate(amount: Option<f32>, base: String, target: String, codes: &HashSet<String>, cache: &mut Cache) {
-    let amount = if let Some(amount) = amount { amount } else { 1.0 };
-    let target_amount = match get_amount(base.to_uppercase(), target.to_uppercase(), amount, codes, cache).await {
-        Ok(r) => r,
-        Err(e) => {
-            println!("{0}", e.to_string());
-            return;
-        }
-    };
-    println!("{amount} {base} = {target_amount} {target}");
-}
-
-async fn print_all_rates(curr: String, codes: &HashSet<String>, cache: &mut Cache) {
-    let rates = get_all_rates(curr.to_uppercase(), codes, cache).await;
-    let rates = match rates {
-        Ok(r) => r,
-        Err(e) => {
-            println!("{0}", e.to_string());
-            return;
-        }
-    };
-    println!("Currency echange rates for {curr}:");
+pub fn print_all_rates(base: String, rates: HashMap<String, f32>) {
+    println!("Conversion rates for {base}: ");
     for (k, v) in rates {
-        println!("{k} : {v}")
+        println!("{k}: {v}");
     }
 }
 
-async fn interactive_print_all_rates(codes: &HashSet<String>, cache: &mut Cache) {
-    let curr = Text::new("Base currency code: ").prompt();
-    let curr = match curr {
-        Ok(c) => c,
-        Err(e) => {
-            println!("{0}", e.to_string());
-            return;
-        }
-
-    };
-    print_all_rates(curr, &codes, cache).await;
-}
-
-async fn interactive_print_rate(codes: &HashSet<String>, cache: &mut Cache) {
-    let base = Text::new("Base currency code: ").prompt();
-    let base = match base {
-        Ok(c) => c,
-        Err(e) => {
-            println!("{0}", e.to_string());
-            return;
-        }
-    };
-    let target = Text::new("Target currency code: ").prompt();
-    let target = match target {
-        Ok(c) => c,
-        Err(e) => {
-            println!("{0}", e.to_string());
-            return;
-        }
-    };
-    print_rate(Some(1.0), base, target, &codes, cache).await;
-}
-
-async fn interactive_print_amount(codes: &HashSet<String>, cache: &mut Cache) {
-    let base = Text::new("Base currency code: ").prompt();
-    let base = match base {
-        Ok(c) => c,
-        Err(e) => {
-            println!("{0}", e.to_string());
-            return;
-        }
-    };
-    let target = Text::new("Target currency code: ").prompt();
-    let target = match target {
-        Ok(c) => c,
-        Err(e) => {
-            println!("{0}", e.to_string());
-            return;
-        }
-    };
-    let amount = Text::new("Amount to convert: ").prompt();
-    let amount = match amount {
-        Ok(c) => {
-            let a = f32::from_str(&c);
-            match a {
-                Ok(a) => a,
-                Err(e) => {
-                    println!("{0}", e.to_string());
-                    return;
-                }            }
-        },
-        Err(e) => {
-            println!("{0}", e.to_string());
-            return;
-        }
-    };
-    print_rate(Some(amount), base, target, &codes, cache).await;
-}
